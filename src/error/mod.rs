@@ -13,18 +13,15 @@ pub struct ErrorResponse {
 
 #[derive(Debug)]
 pub enum AppError {
-    // Auth errors
     Unauthorized(String),
     InvalidCredentials,
     TokenExpired,
     TokenInvalid,
 
-    // Validation errors
     ValidationError(String),
     DniInvalid(String),
     EmailInvalid(String),
 
-    // Business logic errors
     EventNotFound,
     EventAlreadyPublished,
     EventCancelled,
@@ -32,22 +29,18 @@ pub enum AppError {
     MaxTicketsExceeded,
     EventDatePassed,
 
-    // Purchase errors
     PurchaseNotFound,
     PaymentFailed(String),
     PaymentPending,
 
-    // Database errors
     DatabaseError(String),
     NotFound(String),
     AlreadyExists(String),
 
-    // External service errors
     ExternalServiceError(String),
     ReniecServiceError(String),
     StorageError(String),
 
-    // Generic
     InternalServerError(String),
     BadRequest(String),
 }
