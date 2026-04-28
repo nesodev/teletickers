@@ -39,6 +39,12 @@ impl Money {
     pub fn round_to_cents(&self) -> Self {
         Money { amount: self.amount.round_dp(2) }
     }
+
+    pub fn calcular_igv(&self) -> Self {
+        let igv_rate = Decimal::new(18, 2); // 18%
+        let igv = self.amount * igv_rate / Decimal::new(100, 0);
+        Money { amount: igv.round_dp(2) }
+    }
 }
 
 impl Add for Money {
