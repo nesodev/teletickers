@@ -6,7 +6,14 @@ use uuid::Uuid;
 pub struct QrCode(String);
 
 impl QrCode {
-    /// Genera un nuevo código QR único
+    //crear función new
+
+    pub fn new(value: impl Into<String>) -> AppResult<Self> {
+        let value = value.into();
+        Self::validate(&value)?;
+        Ok(QrCode(value))
+    }
+
     pub fn generate() -> Self {
         let uuid = Uuid::new_v4();
         QrCode(format!("TICKY-{}", uuid.to_string().to_uppercase()))

@@ -14,7 +14,8 @@ async-graphql-actix-web = "7.0.17"
 
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-
+printpdf = "0.8.2"
+reqwest = { version = "0.12.24", features = ["json", "rustls-tls"] }
 sea-orm = { version = "1.0", features = [
     "sqlx-postgres",
     "runtime-actix-rustls",
@@ -26,18 +27,17 @@ sqlx = { version = "0.8.6", features = [
     "runtime-tokio-rustls",
     "macros",
 ] }
-
+lettre = "0.11.19"
 futures = "0.3"
-
 regex = "1.12.2"
+rand = "0.8"
+argon2 = "0.5.3"
 
 # Seguridad / Autenticación
 jsonwebtoken = { version = "10.2.0", features = ["rust_crypto"] }
 bcrypt = "0.17.1"
-
+qrcode = "0.14.1"
 dotenvy = "0.15.7"
-envy = "0.4"
-
 rust_decimal = "1.39"
 
 # Configuración y entorno
@@ -58,10 +58,6 @@ futures-util = "0.3.31"
 log = "0.4"
 env_logger = "0.11"
 
-
-# ==========================================
-# DEPENDENCIAS OPCIONALES (para test y debug)
-# ==========================================
 [dev-dependencies]
 actix-http-test = "3.2.0"
 tokio = { version = "1.40", features = ["macros", "rt-multi-thread", "time"] }

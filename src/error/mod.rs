@@ -159,7 +159,6 @@ impl ResponseError for AppError {
     }
 }
 
-// Conversión desde SeaORM
 impl From<sea_orm::DbErr> for AppError {
     fn from(err: sea_orm::DbErr) -> Self {
         match err {
