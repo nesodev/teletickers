@@ -2,6 +2,7 @@ pub mod config;
 pub mod domain;
 pub mod error;
 pub mod external;
+pub mod graphql;
 pub mod infrastructure;
 pub mod middleware;
 pub mod ports;
