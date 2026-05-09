@@ -1,7 +1,7 @@
 use crate::domain::User;
 use crate::graphql::context::GraphQLContext;
-use crate::infrastructure::auth::{JwtService, PasswordHasherService};
-use crate::usecases::auth::{LoginUserUseCase, RegisterUserUseCase};
+use crate::infrastructure::auth::{jwt_service::JwtService, password_hasher::PasswordHasherService};
+use crate::usecases::auth::{login_user::LoginUserUseCase, register_user::RegisterUserUseCase};
 use async_graphql::*;
 use std::sync::Arc;
 
@@ -38,7 +38,7 @@ impl From<User> for UserObject {
 #[Object]
 impl AuthMutation {
     async fn register(&self, ctx: &Context<'_>, nombre: String, email: String, password: String, dni: String, numero_cel: Option<String>) -> Result<AuthPayload> {
-        let context = ctx.data::<GraphQLContext>()?;
+        let context = ctx.data::<Arc<GraphQLContext>>()?;
         let password_hasher = ctx.data::<Arc<PasswordHasherService>>()?;
         let jwt_service = ctx.data::<Arc<JwtService>>()?;
 
@@ -52,7 +52,7 @@ impl AuthMutation {
     }
 
     async fn login(&self, ctx: &Context<'_>, email: String, password: String) -> Result<AuthPayload> {
-        let context = ctx.data::<GraphQLContext>()?;
+        let context = ctx.data::<Arc<GraphQLContext>>()?;
         let password_hasher = ctx.data::<Arc<PasswordHasherService>>()?;
         let jwt_service = ctx.data::<Arc<JwtService>>()?;
 

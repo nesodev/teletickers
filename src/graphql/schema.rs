@@ -14,6 +14,6 @@ pub struct SubscriptionRoot(ColaVirtualSubscription);
 
 pub type TickySchema = Schema<QueryRoot, MutationRoot, SubscriptionRoot>;
 
-pub fn build_schema() -> TickySchema {
-    Schema::build(QueryRoot::default(), MutationRoot::default(), SubscriptionRoot::default()).finish()
+pub fn build_schema() -> SchemaBuilder<QueryRoot, MutationRoot, SubscriptionRoot> {
+    Schema::build(QueryRoot::default(), MutationRoot::default(), SubscriptionRoot::default())
 }

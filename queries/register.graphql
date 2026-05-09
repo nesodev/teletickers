@@ -1,0 +1,16 @@
+mutation {
+  register(
+    nombre: "Juan Pérez"
+    email: "juan@example.com"
+    password: "password123"
+    dni: "12345678"
+    numeroCel: "987654321"
+  ) {
+    token
+    user {
+      id
+      nombre
+      email
+    }
+  }
+}

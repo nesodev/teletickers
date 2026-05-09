@@ -1,6 +1,7 @@
 use crate::graphql::context::GraphQLContext;
 use crate::graphql::mutations::auth_mutation::UserObject;
 use async_graphql::*;
+use std::sync::Arc;
 
 #[derive(Default)]
 pub struct UserQuery;
@@ -8,7 +9,7 @@ pub struct UserQuery;
 #[Object]
 impl UserQuery {
     async fn me(&self, ctx: &Context<'_>) -> Result<UserObject> {
-        let context = ctx.data::<GraphQLContext>()?;
+        let context = ctx.data::<Arc<GraphQLContext>>()?;
         let user_id = context.current_user_id.ok_or_else(|| Error::new("Unauthorized"))?;
 
         let user = context

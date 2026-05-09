@@ -6,6 +6,9 @@ pub struct JwtConfig {
 }
 
 impl JwtConfig {
+    pub fn new(secret: String, expiration_hours: i64) -> Self {
+        Self { secret, expiration_hours }
+    }
     pub fn from_env() -> Self {
         Self {
             secret: env::var("JWT_SECRET").expect("JWT_SECRET must be set"),

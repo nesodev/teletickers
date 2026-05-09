@@ -16,7 +16,7 @@ pub struct PaymentWebhookResponse {
     pub message: String,
 }
 
-#[post("/webhook/payment")]
+#[post("/api/webhook/payment")]
 pub async fn payment_webhookx(compra_repo: web::Data<Arc<dyn CompraPort>>, req: web::Json<PaymentWebhookRequest>) -> impl Responder {
     if req.status != "success" {
         return HttpResponse::Ok().json(PaymentWebhookResponse {
