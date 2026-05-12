@@ -1,6 +1,7 @@
 use crate::graphql::context::GraphQLContext;
 use crate::usecases::analytics::*;
 use async_graphql::*;
+use std::sync::Arc;
 
 #[derive(Default)]
 pub struct AnalyticsQuery;
@@ -27,7 +28,7 @@ pub struct EventoStatsObject {
 #[Object]
 impl AnalyticsQuery {
     async fn dashboard_metrics(&self, ctx: &Context<'_>) -> Result<DashboardMetricsObject> {
-        let context = ctx.data::<GraphQLContext>()?;
+        let context = ctx.data::<Arc<GraphQLContext>>()?;
         let user_id = context.current_user_id.ok_or_else(|| Error::new("Unauthorized"))?;
 
         let use_case = GetDashboardMetricsUseCase::new(context.evento_repo.clone(), context.compra_repo.clone());
@@ -43,7 +44,7 @@ impl AnalyticsQuery {
     }
 
     async fn evento_stats(&self, ctx: &Context<'_>, evento_id: String) -> Result<EventoStatsObject> {
-        let context = ctx.data::<GraphQLContext>()?;
+        let context = ctx.data::<Arc<GraphQLContext>>()?;
         let id = evento_id.parse().map_err(|_| Error::new("Invalid UUID"))?;
 
         let use_case = GetEventoStatsUseCase::new(context.evento_repo.clone(), context.compra_repo.clone(), context.entrada_repo.clone());

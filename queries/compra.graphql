@@ -1,0 +1,19 @@
+# ES NECESARIO ESTO
+
+# {
+#  "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjMDk3YjU4Ny1lMWI0LTRiMDgtYTRmOC1kOTJlZjlkZWYzNjEiLCJleHAiOjE3NjMwOTYxNjksImlhdCI6MTc2MzAwOTc2OX0.WBrs9sliX93Q1O6y-LIWOMBw9ccj2PpIfJJjNPa6LVI"
+# }
+#
+
+mutation {
+  createCompra(
+    eventoId: "8f02daf0-e24b-4172-992d-7d0c85ef8130"
+    tipoEntradaId: "bf67b2c8-c5ff-4285-b722-9a3464e206e8"
+    cantidad: 2
+    metodoPago: "yape"
+  ) {
+    id
+    montoTotal
+    estadoPago
+  }
+}

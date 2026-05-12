@@ -1,0 +1,26 @@
+# ES NECESARIO ESTO
+
+# {
+#  "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjMDk3YjU4Ny1lMWI0LTRiMDgtYTRmOC1kOTJlZjlkZWYzNjEiLCJleHAiOjE3NjMwOTYxNjksImlhdCI6MTc2MzAwOTc2OX0.WBrs9sliX93Q1O6y-LIWOMBw9ccj2PpIfJJjNPa6LVI"
+# }
+#
+
+mutation {
+  createEvento(
+    titulo: "Concierto Rock 2024"
+    descripcion: "Gran concierto de rock en Lima"
+    fecha: "2024-12-31"
+    hora: "20:00:00"
+    region: "Lima"
+    provincia: "Lima"
+    distrito: "Miraflores"
+    categoria: "musica"
+    aforo: 500
+    restriccionEdad: "todo_publico"
+  ) {
+    id
+    titulo
+    estado
+    fecha
+  }
+}

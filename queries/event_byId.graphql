@@ -1,0 +1,17 @@
+# ES NECESARIO ESTO
+
+# {
+#  "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjMDk3YjU4Ny1lMWI0LTRiMDgtYTRmOC1kOTJlZjlkZWYzNjEiLCJleHAiOjE3NjMwOTYxNjksImlhdCI6MTc2MzAwOTc2OX0.WBrs9sliX93Q1O6y-LIWOMBw9ccj2PpIfJJjNPa6LVI"
+# }
+#
+
+query {
+  evento(id: "137f6235-7cf8-4db1-8277-bef9178e4149") {
+    id
+    titulo
+    descripcion
+    fecha
+    hora
+    estado
+  }
+}

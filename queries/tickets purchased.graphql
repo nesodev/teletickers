@@ -1,0 +1,7 @@
+query {
+  misEntradas(compraId: "1a2c2ca0-ebb4-45a4-b3cb-64ab492bb201") {
+    id
+    qrCode
+    estado
+  }
+}

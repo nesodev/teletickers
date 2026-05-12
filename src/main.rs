@@ -12,16 +12,16 @@ async fn main() -> std::io::Result<()> {
     dotenv().ok();
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
-    log::info!("🚀 Iniciando Ticky Backend");
+    log::info!("Iniciando Ticky Backend");
 
     let server_config = ServerConfig::from_env();
     let frontend_url = server_config.frontend_url.clone();
     let app_state = AppState::new().await.expect("Error al inicializar aplicación");
 
-    log::info!("✅ Aplicación inicializada");
-    log::info!("🌐 Servidor: {}", server_config.base_url());
-    log::info!("🎮 Playground: {}/playground", server_config.base_url());
-    log::info!("🔌 WebSocket: ws://{}/graphql/ws", server_config.address());
+    log::info!("Aplicación inicializada");
+    log::info!("Servidor: {}", server_config.base_url());
+    log::info!("Playground: {}/playground", server_config.base_url());
+    log::info!("WebSocket: ws://{}/graphql/ws", server_config.address());
 
     HttpServer::new(move || {
         App::new()

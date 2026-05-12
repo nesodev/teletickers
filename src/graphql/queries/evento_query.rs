@@ -2,6 +2,7 @@ use crate::graphql::context::GraphQLContext;
 use crate::graphql::mutations::evento_mutation::EventoObject;
 use crate::usecases::eventos::GetEventosUseCase;
 use async_graphql::*;
+use std::sync::Arc;
 
 #[derive(Default)]
 pub struct EventoQuery;
@@ -9,7 +10,7 @@ pub struct EventoQuery;
 #[Object]
 impl EventoQuery {
     async fn evento(&self, ctx: &Context<'_>, id: String) -> Result<Option<EventoObject>> {
-        let context = ctx.data::<GraphQLContext>()?;
+        let context = ctx.data::<Arc<GraphQLContext>>()?;
         let evento_id = id.parse().map_err(|_| Error::new("Invalid UUID"))?;
 
         let use_case = GetEventosUseCase::new(context.evento_repo.clone());
@@ -20,7 +21,7 @@ impl EventoQuery {
     }
 
     async fn eventos_publicados(&self, ctx: &Context<'_>) -> Result<Vec<EventoObject>> {
-        let context = ctx.data::<GraphQLContext>()?;
+        let context = ctx.data::<Arc<GraphQLContext>>()?;
 
         let use_case = GetEventosUseCase::new(context.evento_repo.clone());
 
@@ -30,7 +31,7 @@ impl EventoQuery {
     }
 
     async fn mis_eventos(&self, ctx: &Context<'_>) -> Result<Vec<EventoObject>> {
-        let context = ctx.data::<GraphQLContext>()?;
+        let context = ctx.data::<Arc<GraphQLContext>>()?;
         let user_id = context.current_user_id.ok_or_else(|| Error::new("Unauthorized"))?;
 
         let use_case = GetEventosUseCase::new(context.evento_repo.clone());
@@ -41,7 +42,7 @@ impl EventoQuery {
     }
 
     async fn search_eventos(&self, ctx: &Context<'_>, query: String) -> Result<Vec<EventoObject>> {
-        let context = ctx.data::<GraphQLContext>()?;
+        let context = ctx.data::<Arc<GraphQLContext>>()?;
 
         let use_case = GetEventosUseCase::new(context.evento_repo.clone());
 

@@ -2,6 +2,7 @@ use crate::domain::{Compra, MetodoPago};
 use crate::graphql::context::GraphQLContext;
 use crate::usecases::compras::*;
 use async_graphql::*;
+use std::sync::Arc;
 
 #[derive(Default)]
 pub struct CompraMutation;
@@ -39,7 +40,7 @@ pub struct PaymentResponse {
 #[Object]
 impl CompraMutation {
     async fn create_compra(&self, ctx: &Context<'_>, evento_id: String, tipo_entrada_id: String, cantidad: i32, metodo_pago: String) -> Result<CompraObject> {
-        let context = ctx.data::<GraphQLContext>()?;
+        let context = ctx.data::<Arc<GraphQLContext>>()?;
         let user_id = context.current_user_id.ok_or_else(|| Error::new("Unauthorized"))?;
 
         let evento_uuid = evento_id.parse().map_err(|_| Error::new("Invalid evento_id"))?;
@@ -54,7 +55,7 @@ impl CompraMutation {
     }
 
     async fn process_payment(&self, ctx: &Context<'_>, compra_id: String, email: String) -> Result<PaymentResponse> {
-        let context = ctx.data::<GraphQLContext>()?;
+        let context = ctx.data::<Arc<GraphQLContext>>()?;
         let id = compra_id.parse().map_err(|_| Error::new("Invalid UUID"))?;
 
         let use_case = ProcessPaymentUseCase::new(context.compra_repo.clone(), context.payment_service.clone());
@@ -69,7 +70,7 @@ impl CompraMutation {
     }
 
     async fn cancel_compra(&self, ctx: &Context<'_>, compra_id: String) -> Result<CompraObject> {
-        let context = ctx.data::<GraphQLContext>()?;
+        let context = ctx.data::<Arc<GraphQLContext>>()?;
         let id = compra_id.parse().map_err(|_| Error::new("Invalid UUID"))?;
 
         let use_case = CancelCompraUseCase::new(context.compra_repo.clone(), context.entrada_repo.clone());

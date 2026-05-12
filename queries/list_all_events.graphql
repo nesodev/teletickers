@@ -1,0 +1,18 @@
+# ES NECESARIO ESTO
+
+# {
+#  "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjMDk3YjU4Ny1lMWI0LTRiMDgtYTRmOC1kOTJlZjlkZWYzNjEiLCJleHAiOjE3NjMwOTYxNjksImlhdCI6MTc2MzAwOTc2OX0.WBrs9sliX93Q1O6y-LIWOMBw9ccj2PpIfJJjNPa6LVI"
+# }
+#
+
+query {
+  eventosPublicados {
+    id
+    titulo
+    descripcion
+    fecha
+    hora
+    categoria
+    aforo
+  }
+}

@@ -1,6 +1,7 @@
 use crate::domain::Notificacion;
 use crate::graphql::context::GraphQLContext;
 use async_graphql::*;
+use std::sync::Arc;
 
 #[derive(Default)]
 pub struct NotificacionQuery;
@@ -31,7 +32,7 @@ impl From<Notificacion> for NotificacionObject {
 #[Object]
 impl NotificacionQuery {
     async fn mis_notificaciones(&self, ctx: &Context<'_>) -> Result<Vec<NotificacionObject>> {
-        let context = ctx.data::<GraphQLContext>()?;
+        let context = ctx.data::<Arc<GraphQLContext>>()?;
         let user_id = context.current_user_id.ok_or_else(|| Error::new("Unauthorized"))?;
 
         let notificaciones = context.notificacion_repo.list_by_usuario(user_id).await.map_err(|e| Error::new(e.to_string()))?;
@@ -40,7 +41,7 @@ impl NotificacionQuery {
     }
 
     async fn notificaciones_no_leidas(&self, ctx: &Context<'_>) -> Result<Vec<NotificacionObject>> {
-        let context = ctx.data::<GraphQLContext>()?;
+        let context = ctx.data::<Arc<GraphQLContext>>()?;
         let user_id = context.current_user_id.ok_or_else(|| Error::new("Unauthorized"))?;
 
         let notificaciones = context.notificacion_repo.list_no_leidas(user_id).await.map_err(|e| Error::new(e.to_string()))?;

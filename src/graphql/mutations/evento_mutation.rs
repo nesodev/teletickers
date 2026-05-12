@@ -3,6 +3,7 @@ use crate::graphql::context::GraphQLContext;
 use crate::usecases::eventos::*;
 use async_graphql::*;
 use chrono::{NaiveDate, NaiveTime};
+use std::sync::Arc;
 
 #[derive(Default)]
 pub struct EventoMutation;
@@ -58,7 +59,7 @@ impl EventoMutation {
         restriccion_edad: Option<String>,
         miniatura: Option<String>,
     ) -> Result<EventoObject> {
-        let context = ctx.data::<GraphQLContext>()?;
+        let context = ctx.data::<Arc<GraphQLContext>>()?;
         let user_id = context.current_user_id.ok_or_else(|| Error::new("Unauthorized"))?;
 
         let fecha_parsed = NaiveDate::parse_from_str(&fecha, "%Y-%m-%d").map_err(|_| Error::new("Invalid date format"))?;
@@ -91,7 +92,7 @@ impl EventoMutation {
     }
 
     async fn publish_evento(&self, ctx: &Context<'_>, evento_id: String) -> Result<EventoObject> {
-        let context = ctx.data::<GraphQLContext>()?;
+        let context = ctx.data::<Arc<GraphQLContext>>()?;
         let id = evento_id.parse().map_err(|_| Error::new("Invalid UUID"))?;
 
         let use_case = PublishEventoUseCase::new(context.evento_repo.clone());
@@ -102,7 +103,7 @@ impl EventoMutation {
     }
 
     async fn cancel_evento(&self, ctx: &Context<'_>, evento_id: String) -> Result<EventoObject> {
-        let context = ctx.data::<GraphQLContext>()?;
+        let context = ctx.data::<Arc<GraphQLContext>>()?;
         let id = evento_id.parse().map_err(|_| Error::new("Invalid UUID"))?;
 
         let use_case = CancelEventoUseCase::new(context.evento_repo.clone());

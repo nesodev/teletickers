@@ -1,6 +1,7 @@
 use crate::graphql::context::GraphQLContext;
 use crate::graphql::mutations::compra_mutation::CompraObject;
 use async_graphql::*;
+use std::sync::Arc;
 
 #[derive(Default)]
 pub struct CompraQuery;
@@ -8,7 +9,7 @@ pub struct CompraQuery;
 #[Object]
 impl CompraQuery {
     async fn mis_compras(&self, ctx: &Context<'_>) -> Result<Vec<CompraObject>> {
-        let context = ctx.data::<GraphQLContext>()?;
+        let context = ctx.data::<Arc<GraphQLContext>>()?;
         let user_id = context.current_user_id.ok_or_else(|| Error::new("Unauthorized"))?;
 
         let compras = context.compra_repo.list_by_usuario(user_id).await.map_err(|e| Error::new(e.to_string()))?;
@@ -17,7 +18,7 @@ impl CompraQuery {
     }
 
     async fn compra(&self, ctx: &Context<'_>, id: String) -> Result<Option<CompraObject>> {
-        let context = ctx.data::<GraphQLContext>()?;
+        let context = ctx.data::<Arc<GraphQLContext>>()?;
         let compra_id = id.parse().map_err(|_| Error::new("Invalid UUID"))?;
 
         let compra = context.compra_repo.find_by_id(compra_id).await.map_err(|e| Error::new(e.to_string()))?;

@@ -4,6 +4,7 @@ use crate::graphql::context::GraphQLContext;
 use crate::usecases::entradas::CreateTipoEntradaUseCase;
 use async_graphql::*;
 use rust_decimal::Decimal;
+use std::sync::Arc;
 
 #[derive(Default)]
 pub struct TipoEntradaMutation;
@@ -45,7 +46,7 @@ impl TipoEntradaMutation {
         cantidad_disponible: i32,
         descripcion: Option<String>,
     ) -> Result<TipoEntradaObject> {
-        let context = ctx.data::<GraphQLContext>()?;
+        let context = ctx.data::<Arc<GraphQLContext>>()?;
         let evento_uuid = evento_id.parse().map_err(|_| Error::new("Invalid evento_id"))?;
 
         let precio_decimal = Decimal::from_f64_retain(precio).ok_or_else(|| Error::new("Invalid precio"))?;

@@ -1,0 +1,21 @@
+# ES NECESARIO ESTO
+
+# {
+#  "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjMDk3YjU4Ny1lMWI0LTRiMDgtYTRmOC1kOTJlZjlkZWYzNjEiLCJleHAiOjE3NjMwOTYxNjksImlhdCI6MTc2MzAwOTc2OX0.WBrs9sliX93Q1O6y-LIWOMBw9ccj2PpIfJJjNPa6LVI"
+# }
+#
+
+mutation {
+  createTipoEntrada(
+    eventoId: "8f02daf0-e24b-4172-992d-7d0c85ef8130"
+    nombre: "VIP"
+    precio: 100.50
+    maxPorCompra: 4
+    cantidadDisponible: 50
+    descripcion: "Acceso VIP con zona preferencial"
+  ) {
+    id
+    nombre
+    precio
+  }
+}

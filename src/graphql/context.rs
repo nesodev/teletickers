@@ -2,6 +2,7 @@ use crate::ports::*;
 use std::sync::Arc;
 use uuid::Uuid;
 
+#[derive(Clone)]
 pub struct GraphQLContext {
     pub user_repo: Arc<dyn UserPort>,
     pub evento_repo: Arc<dyn EventoPort>,
