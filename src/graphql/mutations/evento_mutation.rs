@@ -1,3 +1,4 @@
+// src/graphql/mutations/evento_mutation.rs
 use crate::domain::{Evento, RestriccionEdad};
 use crate::graphql::context::GraphQLContext;
 use crate::usecases::eventos::*;
@@ -21,6 +22,7 @@ pub struct EventoObject {
     pub categoria: String,
     pub aforo: i32,
     pub estado: String,
+    pub miniatura: Option<String>,
 }
 
 impl From<Evento> for EventoObject {
@@ -37,6 +39,7 @@ impl From<Evento> for EventoObject {
             categoria: evento.categoria,
             aforo: evento.aforo,
             estado: evento.estado.as_str().to_string(),
+            miniatura: evento.miniatura,
         }
     }
 }
