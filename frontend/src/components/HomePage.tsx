@@ -5,22 +5,34 @@ import AdvancedSearchBar from './ui/AdvancedSearchBar';
 import BannerCarousel from './ui/BannerCarousel';
 import Header from './ui/Header';
 import Footer from './ui/Footer';
+import BottomNav from './ui/BottomNav';
 
 export default function HomePage() {
   return (
     <>
-      <Sidebar />
+      {/* Sidebar solo visible en desktop */}
+      <div className="hidden md:block">
+        <Sidebar />
+      </div>
+
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
         <Header />
         <ApolloWrapper>
-          <div className="container mx-auto px-4 py-8">
+          {/* En mobile: sin padding lateral del sidebar */}
+          <div className="container mx-auto px-4 py-4 md:py-8 pb-24 md:pb-8">
             <BannerCarousel />
             <AdvancedSearchBar />
             <EventListWithSections />
           </div>
         </ApolloWrapper>
-        <Footer />
+        {/* Footer solo en desktop */}
+        <div className="hidden md:block">
+          <Footer />
+        </div>
       </div>
+
+      {/* Bottom nav solo en mobile */}
+      <BottomNav />
     </>
   );
 }

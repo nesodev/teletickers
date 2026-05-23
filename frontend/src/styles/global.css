@@ -23,3 +23,41 @@
     transform: translateY(0);
   }
 }
+
+/* ── iOS PWA Safe Area ─────────────────────────────────────── */
+:root {
+  --sat: env(safe-area-inset-top);
+  --sar: env(safe-area-inset-right);
+  --sab: env(safe-area-inset-bottom);
+  --sal: env(safe-area-inset-left);
+}
+
+/* Padding inferior para la home bar de iPhone */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Evitar que el contenido quede detrás de la barra de estado */
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Scroll suave en iOS */
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Quitar el highlight azul al tocar en iOS */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Fuente más legible en mobile */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
