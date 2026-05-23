@@ -1,55 +1,46 @@
-FROM rust:alpine3.20
+FROM rust:latest AS builder
 
 WORKDIR /app
 
-ENV UID=1000
-ENV GID=1000
-ENV OPENSSL_DIR=/usr
+# Dependencias del sistema
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    libssl-dev \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN : \
-    && apk add --no-cache \
-        musl-dev \
-        openssl \
-        openssl-dev \
-        build-base \
-        pkgconfig \
-        perl \
-        make \
-        libgcc \
-        libstdc++ \
-        musl \
-    && :
+# Copiar manifiestos primero para cachear dependencias
+COPY Cargo.toml ./
 
-RUN : \
-    && cargo install sqlx-cli --no-default-features --features postgres \
-    && :
+# Crear src dummy para compilar dependencias
+RUN mkdir -p src && echo 'fn main() {}' > src/main.rs
 
-COPY Cargo.toml Cargo.lock ./
+# Compilar dependencias (cacheado si Cargo.toml no cambia)
+RUN cargo build --release 2>/dev/null || true
 
-RUN : \
-    --mount=type=cache,target=/app/target \
-    --mount=type=cache,target=/usr/local/cargo/registry \
-    --mount=type=cache,target=/usr/local/cargo/git \
-    : \
-    && mkdir -p src \
-    && echo 'fn main() {}' > src/main.rs \
-    && cargo build --target x86_64-unknown-linux-musl \
-    && rm -rf src \
-    && :
+# Copiar código fuente real
+COPY src ./src
+COPY assets ./assets
+COPY migrations ./migrations
 
-COPY . .
+# Compilar el binario final
+RUN touch src/main.rs && cargo build --release
 
-ENV SQLX_OFFLINE=true
+# ─── Imagen final ───────────────────────────────────────────────
+FROM debian:bookworm-slim
 
-RUN \
-    --mount=type=cache,target=/app/target \
-    --mount=type=cache,target=/usr/local/cargo/registry \
-    --mount=type=cache,target=/usr/local/cargo/git \
-    : \
-    && cargo build --target x86_64-unknown-linux-musl \
-    && cp /app/target/x86_64-unknown-linux-musl/debug/sistema_backend /app/ticky \
-    && :
+WORKDIR /app
 
-ENV SQLX_OFFLINE=false
+RUN apt-get update && apt-get install -y \
+    libssl3 \
+    libpq5 \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /app/target/release/sistema_backend /app/ticky
+COPY --from=builder /app/assets ./assets
+COPY --from=builder /app/migrations ./migrations
+
+EXPOSE 8080
 
 CMD ["/app/ticky"]
