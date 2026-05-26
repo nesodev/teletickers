@@ -29,10 +29,6 @@ impl UpdateEventoUseCase {
     ) -> AppResult<Evento> {
         let mut evento = self.evento_repo.find_by_id(evento_id).await?.ok_or(AppError::EventNotFound)?;
 
-        if evento.esta_publicado() {
-            return Err(AppError::EventAlreadyPublished);
-        }
-
         if let Some(t) = titulo {
             evento.titulo = t;
         }

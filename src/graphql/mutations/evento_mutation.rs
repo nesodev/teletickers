@@ -115,4 +115,44 @@ impl EventoMutation {
 
         Ok(evento.into())
     }
+
+    async fn update_evento(
+        &self,
+        ctx: &Context<'_>,
+        id: String,
+        titulo: Option<String>,
+        descripcion: Option<String>,
+        fecha: Option<String>,
+        hora: Option<String>,
+        _region: Option<String>,
+        _provincia: Option<String>,
+        _distrito: Option<String>,
+        categoria: Option<String>,
+        aforo: Option<i32>,
+        miniatura: Option<String>,
+    ) -> Result<EventoObject> {
+        let context = ctx.data::<Arc<GraphQLContext>>()?;
+        let evento_id = id.parse().map_err(|_| Error::new("Invalid UUID"))?;
+
+        let fecha_parsed = if let Some(f) = fecha {
+            Some(NaiveDate::parse_from_str(&f, "%Y-%m-%d").map_err(|_| Error::new("Invalid date format"))?)
+        } else {
+            None
+        };
+
+        let hora_parsed = if let Some(h) = hora {
+            Some(NaiveTime::parse_from_str(&h, "%H:%M:%S").map_err(|_| Error::new("Invalid time format"))?)
+        } else {
+            None
+        };
+
+        let use_case = update_evento::UpdateEventoUseCase::new(context.evento_repo.clone());
+
+        let evento = use_case
+            .execute(evento_id, titulo, descripcion, fecha_parsed, hora_parsed, categoria, aforo, None, None, miniatura)
+            .await
+            .map_err(|e| Error::new(e.to_string()))?;
+
+        Ok(evento.into())
+    }
 }
