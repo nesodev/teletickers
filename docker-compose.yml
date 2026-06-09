@@ -1,0 +1,53 @@
+name: tickers
+
+services:
+  tickers_server:
+    depends_on:
+      - tickers_db
+      - minio
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    tty: true
+    env_file:
+      - .env
+    ports:
+      - 6969:6969
+    volumes:
+      - .:/app
+    environment:
+      - ROCKET_PORT=6969
+      - ROCKET_ADDRESS=0.0.0.0
+
+  tickers_db:
+    image: postgres:16.4-bullseye
+    depends_on:
+      - minio
+    env_file:
+      - .env
+    ports:
+      - 5432:5432
+    command: ["postgres", "-c", "log_statement=all"]
+    environment:
+      - POSTGRES_DB=tickers_app
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=dontship
+      # debug all the things
+      - POSTGRES_LOG_STATEMENTS=all
+      - POSTGRES_LOG_STATEMENTS_STATS=all
+
+  minio:
+    image: "quay.io/minio/minio:RELEASE.2025-03-12T18-04-18Z"
+    ports:
+      - "9900:9000"
+      - "9901:9001"
+    volumes:
+      - minio_data:/data
+    command: [ "server", "--console-address", ":9001", "/data" ]
+    environment:
+      MINIO_ROOT_USER: minio_access_key
+      MINIO_ROOT_PASSWORD: minio_secret_key
+      MINIO_DEFAULT_BUCKETS: tickers_bucket
+
+volumes:
+  minio_data:
