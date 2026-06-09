@@ -29,7 +29,7 @@ COPY Cargo.toml Cargo.lock ./
 RUN : \
     && mkdir -p src \
     && echo 'fn main() {}' > src/main.rs \
-    && cargo build --target x86_64-unknown-linux-musl --release \
+    && cargo build --target x86_64-unknown-linux-musl \
     && rm -rf src \
     && :
 
@@ -40,7 +40,7 @@ RUN \
     --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/usr/local/cargo/git \
     : \
-    && cargo build --target x86_64-unknown-linux-musl --release \
+    && cargo build --target x86_64-unknown-linux-musl \
     && mv /app/target/x86_64-unknown-linux-musl/release/ticky /app/ticky \
     && :
 
