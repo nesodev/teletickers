@@ -13,8 +13,6 @@ services:
       - .env
     ports:
       - 6969:6969
-    volumes:
-      - .:/app
     environment:
       - ROCKET_PORT=6969
       - ROCKET_ADDRESS=0.0.0.0

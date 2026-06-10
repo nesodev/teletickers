@@ -27,11 +27,17 @@ RUN : \
 COPY Cargo.toml Cargo.lock ./
 
 RUN : \
+    --mount=type=cache,target=/app/target \
+    --mount=type=cache,target=/usr/local/cargo/registry \
+    --mount=type=cache,target=/usr/local/cargo/git \
+    : \
     && mkdir -p src \
     && echo 'fn main() {}' > src/main.rs \
     && cargo build --target x86_64-unknown-linux-musl \
     && rm -rf src \
     && :
+
+COPY . .
 
 ENV SQLX_OFFLINE=true
 
