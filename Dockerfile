@@ -47,7 +47,10 @@ RUN \
     --mount=type=cache,target=/usr/local/cargo/git \
     : \
     && cargo build --target x86_64-unknown-linux-musl \
-    && mv /app/target/x86_64-unknown-linux-musl/release/ticky /app/ticky \
+    && :
+
+RUN \
+    && mv /app/target/x86_64-unknown-linux-musl/release/sistema_backend /app/ticky \
     && :
 
 ENV SQLX_OFFLINE=false
