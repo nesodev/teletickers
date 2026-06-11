@@ -40,6 +40,7 @@ RUN : \
 COPY . .
 
 ENV SQLX_OFFLINE=true
+ENV CARGO_BUILD_JOBS=1
 
 RUN \
     --mount=type=cache,target=/app/target \
