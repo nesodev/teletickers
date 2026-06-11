@@ -40,7 +40,6 @@ RUN : \
 COPY . .
 
 ENV SQLX_OFFLINE=true
-ENV CARGO_BUILD_JOBS=1
 
 RUN \
     --mount=type=cache,target=/app/target \
@@ -48,10 +47,7 @@ RUN \
     --mount=type=cache,target=/usr/local/cargo/git \
     : \
     && cargo build --target x86_64-unknown-linux-musl \
-    && :
-
-RUN \
-    && mv /app/target/x86_64-unknown-linux-musl/release/sistema_backend /app/ticky \
+    && cp /app/target/x86_64-unknown-linux-musl/debug/sistema_backend /app/ticky \
     && :
 
 ENV SQLX_OFFLINE=false

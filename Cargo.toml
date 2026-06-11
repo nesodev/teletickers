@@ -15,7 +15,7 @@ tokio-stream = "0.1.17"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 printpdf = "0.8.2"
-reqwest = { version = "0.12.24", features = ["json", "rustls-tls"] }
+reqwest = { version = "0.12.24", default-features = false, features = ["json", "rustls-tls"] }
 sea-orm = { version = "1.0", features = [
     "sqlx-postgres",
     "runtime-actix-rustls",
@@ -27,7 +27,7 @@ sqlx = { version = "0.8.6", features = [
     "runtime-tokio-rustls",
     "macros",
 ] }
-lettre = "0.11.19"
+lettre = { version = "0.11.19", default-features = false, features = ["builder", "tokio1", "tokio1-rustls-tls", "smtp-transport", "hostname"] }
 futures = "0.3"
 regex = "1.12.2"
 rand = "0.8"
