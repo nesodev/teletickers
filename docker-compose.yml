@@ -5,9 +5,10 @@ services:
     depends_on:
       - tickers_db
       - minio
-    build:
-      context: .
-      dockerfile: ./Dockerfile
+    image: ghcr.io/paoloose/tickers_backend:latest
+    # build:
+    #   context: .
+    #   dockerfile: ./Dockerfile
     tty: true
     env_file:
       - .env
