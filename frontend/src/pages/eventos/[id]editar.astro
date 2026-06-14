@@ -1,0 +1,355 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Sidebar from "../../components/ui/Sidebar";
+import Header from "../../components/ui/Header";
+import Footer from "../../components/ui/Footer";
+export const prerender = false;
+---
+
+<Layout title="Editar Evento - Ticky">
+  <div
+    class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300"
+  >
+    <Sidebar client:load />
+    <div class="ml-14">
+      <Header client:load />
+      <div id="edit-evento-container" class="container mx-auto px-4 py-8"></div>
+      <Footer client:load />
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { client } from "../../lib/apollo-client";
+  import { gql } from "@apollo/client";
+  import { showToast } from "../../utils/toast";
+
+  const GET_EVENTO = gql`
+    query Evento($id: String!) {
+      evento(id: $id) {
+        id
+        titulo
+        descripcion
+        fecha
+        hora
+        region
+        provincia
+        distrito
+        categoria
+        aforo
+        estado
+        miniatura
+      }
+    }
+  `;
+
+  const UPDATE_EVENTO = gql`
+    mutation UpdateEvento(
+      $id: String!
+      $titulo: String!
+      $descripcion: String
+      $fecha: String!
+      $hora: String!
+      $region: String!
+      $provincia: String!
+      $distrito: String!
+      $categoria: String!
+      $aforo: Int!
+      $miniatura: String
+    ) {
+      updateEvento(
+        id: $id
+        titulo: $titulo
+        descripcion: $descripcion
+        fecha: $fecha
+        hora: $hora
+        region: $region
+        provincia: $provincia
+        distrito: $distrito
+        categoria: $categoria
+        aforo: $aforo
+        miniatura: $miniatura
+      ) {
+        id
+        titulo
+      }
+    }
+  `;
+
+  interface EventoData {
+    evento: {
+      id: string;
+      titulo: string;
+      descripcion?: string;
+      fecha: string;
+      hora: string;
+      region: string;
+      provincia: string;
+      distrito: string;
+      categoria: string;
+      aforo: number;
+      estado: string;
+      miniatura?: string;
+    };
+  }
+
+  const pathParts = window.location.pathname.split("/");
+  const eventoId = pathParts[pathParts.length - 2];
+
+  async function loadEvento() {
+    const container = document.getElementById("edit-evento-container")!;
+
+    container.innerHTML = `
+      <div class="text-center py-12">
+        <div class="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-blue-600 dark:border-blue-400 border-r-transparent"></div>
+        <p class="mt-4 text-gray-700 dark:text-gray-300">Cargando evento...</p>
+      </div>
+    `;
+
+    try {
+      const { data } = await client.query<EventoData>({
+        query: GET_EVENTO,
+        variables: { id: eventoId },
+      });
+
+      if (!data?.evento) {
+        container.innerHTML = `
+          <div class="text-center py-16 bg-white dark:bg-gray-800 rounded-2xl">
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Evento no encontrado</h3>
+            <a href="/mis-eventos" class="text-blue-600 dark:text-blue-400 hover:underline">Volver a mis eventos</a>
+          </div>
+        `;
+        return;
+      }
+
+      const evento = data.evento;
+
+      container.innerHTML = `
+        <div class="max-w-4xl mx-auto">
+          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+            <div class="flex items-center justify-between mb-8">
+              <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Editar Evento</h1>
+              <a href="/mis-eventos" class="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Volver
+              </a>
+            </div>
+
+            <form id="edit-form" class="space-y-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Título del evento *
+                </label>
+                <input
+                  type="text"
+                  name="titulo"
+                  value="${evento.titulo}"
+                  required
+                  class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Descripción
+                </label>
+                <textarea
+                  name="descripcion"
+                  rows="4"
+                  class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                >${evento.descripcion || ""}</textarea>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Fecha *
+                  </label>
+                  <input
+                    type="date"
+                    name="fecha"
+                    value="${evento.fecha}"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Hora *
+                  </label>
+                  <input
+                    type="time"
+                    name="hora"
+                    value="${evento.hora}"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Región *
+                  </label>
+                  <input
+                    type="text"
+                    name="region"
+                    value="${evento.region}"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Provincia *
+                  </label>
+                  <input
+                    type="text"
+                    name="provincia"
+                    value="${evento.provincia}"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Distrito *
+                  </label>
+                  <input
+                    type="text"
+                    name="distrito"
+                    value="${evento.distrito}"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Categoría *
+                  </label>
+                  <select
+                    name="categoria"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  >
+                    <option value="concierto" ${evento.categoria === "concierto" ? "selected" : ""}>Concierto</option>
+                    <option value="teatro" ${evento.categoria === "teatro" ? "selected" : ""}>Teatro</option>
+                    <option value="deportes" ${evento.categoria === "deportes" ? "selected" : ""}>Deportes</option>
+                    <option value="conferencia" ${evento.categoria === "conferencia" ? "selected" : ""}>Conferencia</option>
+                    <option value="festival" ${evento.categoria === "festival" ? "selected" : ""}>Festival</option>
+                    <option value="otro" ${evento.categoria === "otro" ? "selected" : ""}>Otro</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Aforo *
+                  </label>
+                  <input
+                    type="number"
+                    name="aforo"
+                    value="${evento.aforo}"
+                    min="1"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  URL de imagen
+                </label>
+                <input
+                  type="url"
+                  name="miniatura"
+                  value="${evento.miniatura || ""}"
+                  class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="https://ejemplo.com/imagen.jpg"
+                />
+              </div>
+
+              <div class="flex gap-4 pt-4">
+                <button
+                  type="submit"
+                  class="flex-1 bg-blue-600 dark:bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 font-bold transition-colors"
+                >
+                  Guardar Cambios
+                </button>
+                <a
+                  href="/mis-eventos"
+                  class="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 font-bold transition-colors text-center"
+                >
+                  Cancelar
+                </a>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+
+      const form = document.getElementById("edit-form") as HTMLFormElement;
+      form.addEventListener("submit", handleSubmit);
+    } catch (error) {
+      container.innerHTML = `
+        <div class="text-center py-16 bg-red-50 dark:bg-red-900/20 rounded-2xl">
+          <h3 class="text-2xl font-bold text-red-900 dark:text-red-100 mb-2">Error al cargar el evento</h3>
+          <p class="text-red-600 dark:text-red-400 mb-6">${error}</p>
+          <a href="/mis-eventos" class="text-blue-600 dark:text-blue-400 hover:underline">Volver a mis eventos</a>
+        </div>
+      `;
+    }
+  }
+
+  async function handleSubmit(e: Event) {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const formData = new FormData(form);
+
+    const submitBtn = form.querySelector(
+      'button[type="submit"]'
+    ) as HTMLButtonElement;
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Guardando...";
+
+    try {
+      await client.mutate({
+        mutation: UPDATE_EVENTO,
+        variables: {
+          id: eventoId,
+          titulo: formData.get("titulo"),
+          descripcion: formData.get("descripcion"),
+          fecha: formData.get("fecha"),
+          hora: formData.get("hora"),
+          region: formData.get("region"),
+          provincia: formData.get("provincia"),
+          distrito: formData.get("distrito"),
+          categoria: formData.get("categoria"),
+          aforo: parseInt(formData.get("aforo") as string),
+          miniatura: formData.get("miniatura") || null,
+        },
+      });
+
+      showToast("✅ Evento actualizado exitosamente", "success");
+
+      setTimeout(() => {
+        window.location.href = "/mis-eventos";
+      }, 1500);
+    } catch (error: any) {
+      showToast(`❌ Error: ${error.message}`, "error");
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Guardar Cambios";
+    }
+  }
+
+  loadEvento();
+</script>

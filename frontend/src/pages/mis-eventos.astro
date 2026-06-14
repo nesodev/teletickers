@@ -1,0 +1,10 @@
+---
+import Layout from "../layouts/Layout.astro";
+import MyEventsPage from "../components/events/MyEventsPage";
+
+export const prerender = false;
+---
+
+<Layout title="Mis Eventos - Ticky">
+  <MyEventsPage client:only="react" />
+</Layout>

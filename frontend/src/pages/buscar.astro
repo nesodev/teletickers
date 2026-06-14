@@ -1,0 +1,9 @@
+---
+import Layout from "../layouts/Layout.astro";
+import SearchPage from "../components/search/SearchPage";
+export const prerender = false;
+---
+
+<Layout title="Buscar Eventos - Ticky">
+  <SearchPage client:only="react" />
+</Layout>

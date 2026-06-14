@@ -1,0 +1,10 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CreateEventPage from "../components/events/CreateEventPage";
+import Footer from "../components/ui/Footer";
+---
+
+<Layout title="Crear Evento - Ticky">
+  <CreateEventPage client:only="react" />
+</Layout>
+<Footer />

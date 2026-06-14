@@ -1,0 +1,10 @@
+---
+import Layout from "../layouts/Layout.astro";
+import MyTicketsPage from "../components/tickets/MyTicketsPage";
+
+export const prerender = false;
+---
+
+<Layout title="Mis Tickets - Ticky">
+  <MyTicketsPage client:only="react" />
+</Layout>

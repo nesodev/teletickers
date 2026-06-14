@@ -1,51 +1,97 @@
-name: tickers
+name: teletickers
 
 services:
-  tickers_server:
-    depends_on:
-      - tickers_db
-      - minio
-    image: ghcr.io/paoloose/tickers_backend:latest
-    # build:
-    #   context: .
-    #   dockerfile: ./Dockerfile
-    tty: true
-    env_file:
-      - .env
-    ports:
-      - 8080:8080
-    environment:
-      - SERVER_HOST=0.0.0.0
-
-  tickers_db:
+  # ─── Base de datos ───────────────────────────────────────────
+  db:
     image: postgres:16.4-bullseye
-    depends_on:
-      - minio
-    env_file:
-      - .env
-    ports:
-      - 5432:5432
-    command: ["postgres", "-c", "log_statement=all"]
+    container_name: teletickers_db
+    restart: unless-stopped
     environment:
-      - POSTGRES_DB=tickers_app
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=dontship
-      # debug all the things
-      - POSTGRES_LOG_STATEMENTS=all
-      - POSTGRES_LOG_STATEMENTS_STATS=all
+      POSTGRES_DB: tickers_app
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: dontship
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d tickers_app"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
+  # ─── MinIO (almacenamiento S3) ────────────────────────────────
   minio:
     image: "quay.io/minio/minio:RELEASE.2025-03-12T18-04-18Z"
+    container_name: teletickers_minio
+    restart: unless-stopped
     ports:
       - "9900:9000"
       - "9901:9001"
     volumes:
       - minio_data:/data
-    command: [ "server", "--console-address", ":9001", "/data" ]
+    command: ["server", "--console-address", ":9001", "/data"]
     environment:
       MINIO_ROOT_USER: minio_access_key
       MINIO_ROOT_PASSWORD: minio_secret_key
-      MINIO_DEFAULT_BUCKETS: tickers_bucket
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ─── Backend principal (Rust/GraphQL) ─────────────────────────
+  backend:
+    container_name: teletickers_backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    env_file:
+      - ./backend/.env
+    environment:
+      SERVER_HOST: 0.0.0.0
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+
+  # ─── API Events (Go/Gin) ──────────────────────────────────────
+  api-events:
+    container_name: teletickers_api_events
+    build:
+      context: ./api-events
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://admin:dontship@db:5432/tickers_app?sslmode=disable
+      PORT: 8081
+    ports:
+      - "8081:8081"
+
+  # ─── Frontend (Astro) ─────────────────────────────────────────
+  frontend:
+    container_name: teletickers_frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - backend
+      - api-events
+    environment:
+      PUBLIC_GRAPHQL_URL: http://localhost:8080/graphql
+      PUBLIC_API_EVENTS_URL: http://localhost:8081/api
+    ports:
+      - "4321:4321"
 
 volumes:
+  postgres_data:
   minio_data:

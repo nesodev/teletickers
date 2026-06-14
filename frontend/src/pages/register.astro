@@ -1,0 +1,12 @@
+---
+import Layout from "../layouts/Layout.astro";
+import RegisterPage from "../components/auth/RegisterPage";
+---
+
+<Layout title="Registro - Ticky">
+  <div
+    class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4"
+  >
+    <RegisterPage client:only="react" />
+  </div>
+</Layout>

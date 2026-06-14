@@ -1,16 +1,22 @@
-.directory
-
-debug/
-target/
-
-Cargo.lock
-
-**/*.rs.bk
-
-*.pdb
-
-.idea
-.sqlx
+# Entornos
 .env
+.env.local
+.env.production
 
-node_modules/
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.astro/
+
+# Backend
+backend/target/
+
+# Logs
+*.log
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/

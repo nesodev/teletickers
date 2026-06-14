@@ -1,0 +1,10 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Profile from "../components/profile/Profile";
+
+export const prerender = false;
+---
+
+<Layout title="Mi Perfil - Ticky">
+  <Profile client:only="react" />
+</Layout>

@@ -1,0 +1,14 @@
+---
+import Layout from "../layouts/Layout.astro";
+import LoginPage from "../components/auth/LoginPage";
+import Footer from "../components/ui/Footer";
+---
+
+<Layout title="Login - Ticky">
+  <div
+    class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4"
+  >
+    <LoginPage client:only="react" />
+  </div>
+</Layout>
+<Footer />

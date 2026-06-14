@@ -1,0 +1,16 @@
+.directory
+
+debug/
+target/
+
+Cargo.lock
+
+**/*.rs.bk
+
+*.pdb
+
+.idea
+.sqlx
+.env
+
+node_modules/
